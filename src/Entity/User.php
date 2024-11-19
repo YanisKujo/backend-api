@@ -13,10 +13,12 @@ use Symfony\Component\Serializer\Attribute\Ignore;
 use App\Api\Resource\CreateUser;
 use App\Api\Processor\CreateUserProcessor;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\GetCollection;
 
 #[ORM\Entity]
 #[ApiResource]
 #[Post(input: CreateUser::class, processor: CreateUserProcessor::class)]
+#[GetCollection()]
 #[ORM\Table(name: TableEnum::USER)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
