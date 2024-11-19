@@ -5,12 +5,15 @@ namespace App\Doctrine\Trait;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
+use ApiPlatform\Metadata\ApiProperty;
 
 trait TimestampableTrait
 {
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, insertable: false, updatable: false, options: ['default' => 'CURRENT_TIMESTAMP'], generated: 'INSERT')]
+    #[ApiProperty(writable: false, readable: true)]
     public ?DateTime $createdAt = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, insertable: false, updatable: false, columDefinition: 'DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP' , generated: 'ALWAYS')]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, insertable: false, updatable: false, columnDefinition: 'DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP' , generated: 'ALWAYS')]
+    #[ApiProperty(writable: false, readable: true)]
     public ?DateTime $updatedAt = null;
 }

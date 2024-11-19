@@ -6,4 +6,5 @@ class TableEnum
 {
     public const CONTENT = 'content';
     public const USER = 'user';
+    public const COMMENT = 'comment';
 }
