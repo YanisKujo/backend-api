@@ -4,7 +4,8 @@ namespace App\Enum;
 
 class TableEnum
 {
-    public const CONTENT = 'content';
-    public const USER = 'user';
-    public const COMMENT = 'comment';
+    public const string CONTENT = 'content';
+    public const string USER = 'user';
+    public const string COMMENT = 'comment';
+    public const string UPLOAD = 'upload';
 }

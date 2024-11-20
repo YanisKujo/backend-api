@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Doctrine\Trait\UuidTrait;
 use App\Enum\TableEnum;
@@ -14,10 +15,15 @@ use App\Api\Resource\CreateUser;
 use App\Api\Processor\CreateUserProcessor;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Put;
+use App\Enum\RoleEnum;
+use App\Validator\UnregistredEmail;
 
 #[ORM\Entity]
 #[ApiResource]
 #[Post(input: CreateUser::class, processor: CreateUserProcessor::class)]
+#[Delete(security: 'is_granted('.RoleEnum::ROLE_ADMIN.')')]
+#[Put(security: 'is_granted('.RoleEnum::ROLE_ADMIN.')')]
 #[GetCollection()]
 #[ORM\Table(name: TableEnum::USER)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -35,6 +41,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     #[Assert\NotBlank]
     #[Assert\Email]
+    #[UnregistredEmail()]
     public ?string $email = null;
 
     #[ORM\Column]
