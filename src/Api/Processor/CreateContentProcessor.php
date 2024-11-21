@@ -8,6 +8,7 @@ use App\Api\Resource\CreateContent;
 use App\Entity\Content;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 final readonly class CreateContentProcessor implements ProcessorInterface
 {
@@ -36,7 +37,20 @@ final readonly class CreateContentProcessor implements ProcessorInterface
 
         $content->tags = $data->tags;
 
-        $content->slug = $data->slug;
+        $content->metaTitle = $data->metaTitle;
+
+        $content->metaDescription = $data->metaDescription;
+
+        $slugger = new AsciiSlugger();
+        $slug = $slugger->slug($data->title)->lower()->toString();
+
+        $originalSlug = $slug;
+        $i = 1;
+        while ($this->em->getRepository(Content::class)->findOneBy(['slug' => $slug])) {
+            $slug = $originalSlug . '-' . $i++;
+        }
+
+        $content->slug = $slug;
         
         $this->em->persist($content);
         $this->em->flush();

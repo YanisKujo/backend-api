@@ -13,24 +13,25 @@ use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
-use App\Api\Processor\CreateContentProcessor;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Enum\RoleEnum;
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Doctrine\Trait\TimestampableTrait;
+use App\Api\Processor\CreateCommentProcessor;
 
 #[ORM\Table(name: TableEnum::COMMENT)]
 #[ApiResource]
 #[ORM\Entity]
 #[GetCollection()]
-#[Delete(security: 'is_granted('.RoleEnum::ROLE_USER.') and object.author == user or is_granted('.RoleEnum::ROLE_ADMIN.')')]
-#[Post(processor: CreateContentProcessor::class, security: 'is_granted('.RoleEnum::ROLE_USER.')')]
-#[Put(denormalizationContext: ['groups' => ['comment:update']], security: 'is_granted('.RoleEnum::ROLE_USER.') and object.author == user or is_granted('.RoleEnum::ROLE_ADMIN.') and object.author == user')]
+#[Delete(security: 'is_granted("'.RoleEnum::ROLE_USER.'") and object.author == user or is_granted("'.RoleEnum::ROLE_ADMIN.'")')]
+#[Post(processor: CreateCommentProcessor::class, security: 'is_granted("'.RoleEnum::ROLE_USER.'")')]
+#[Put(denormalizationContext: ['groups' => ['comment:update']], security: 'is_granted("'.RoleEnum::ROLE_USER.'") and object.author == user or is_granted("'.RoleEnum::ROLE_ADMIN.'") and object.author == user')]
 #[ApiFilter(SearchFilter::class, properties: ['content' => 'exact'])]
 #[ApiProperty()]
 class Comment
 {
-    use UuidTrait;
+    use UuidTrait, TimestampableTrait;
 
     #[ORM\Column(type: Types::STRING)]
     #[Assert\NotBlank]

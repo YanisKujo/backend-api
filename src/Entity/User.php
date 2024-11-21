@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
@@ -17,18 +18,18 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Put;
 use App\Enum\RoleEnum;
-use App\Validator\UnregistredEmail;
+use App\Doctrine\Trait\TimestampableTrait;
 
 #[ORM\Entity]
 #[ApiResource]
 #[Post(input: CreateUser::class, processor: CreateUserProcessor::class)]
-#[Delete(security: 'is_granted('.RoleEnum::ROLE_ADMIN.')')]
-#[Put(security: 'is_granted('.RoleEnum::ROLE_ADMIN.')')]
+#[Delete(security: 'is_granted("'.RoleEnum::ROLE_USER.'") and object == user or is_granted("'.RoleEnum::ROLE_ADMIN.'")')]
+#[Put(security: 'is_granted("'.RoleEnum::ROLE_USER.'") and object == user or is_granted("'.RoleEnum::ROLE_ADMIN.'")')]
 #[GetCollection()]
 #[ORM\Table(name: TableEnum::USER)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    use UuidTrait;
+    use UuidTrait, TimestampableTrait;
 
     #[ORM\Column]
     #[Assert\NotBlank]
@@ -38,10 +39,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank]
     public ?string $lastName = null;
 
-    #[ORM\Column]
-    #[Assert\NotBlank]
+    #[ORM\Column(unique: true)]
     #[Assert\Email]
-    #[UnregistredEmail()]
+    #[ApiProperty(writable: false)]
     public ?string $email = null;
 
     #[ORM\Column]

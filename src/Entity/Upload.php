@@ -14,7 +14,7 @@ use App\Enum\RoleEnum;
 #[ORM\Entity]
 #[ORM\Table(name: TableEnum::UPLOAD)]
 #[Get]
-#[Post(controller: UploadAction::class, deserialize: false, security: 'is_granted('.RoleEnum::ROLE_ADMIN.')')]
+#[Post(controller: UploadAction::class, deserialize: false, security: 'is_granted("'.RoleEnum::ROLE_ADMIN.'")')]
 class Upload
 {
     use UuidTrait, TimestampableTrait;

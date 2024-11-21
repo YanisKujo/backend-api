@@ -31,6 +31,8 @@ final readonly class CreateCommentProcessor implements ProcessorInterface
 
         $comment->comment = $data->comment;
 
+        $comment->content = $data->content; 
+
         $this->em->persist($comment);
         $this->em->flush();
 

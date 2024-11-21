@@ -36,7 +36,7 @@ class UpdateRoleUserCommand extends Command
             $email = $input->getOption('email');
             $role = $input->getOption('role');
 
-            if (!in_array($role, [RoleEnum::ALL])) {
+            if (!in_array($role, RoleEnum::ALL)) {
                 $output->writeln("Invalid role: {$role}");
                 return Command::FAILURE;
             }
@@ -48,7 +48,8 @@ class UpdateRoleUserCommand extends Command
                 return Command::FAILURE;
             }
 
-            $user->role = [$role];
+            $user->roles = [$role];
+
             $this->em->persist($user);
             $this->em->flush();
 
