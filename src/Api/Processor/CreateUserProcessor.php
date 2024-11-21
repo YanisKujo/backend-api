@@ -24,12 +24,16 @@ final readonly class CreateUserProcessor implements ProcessorInterface
         array $uriVariables = [],
         array $context = [],
     ): User {
-        // les datas envoyés dans le POST sont stockés dans $data !
-        // Vous pouvez reprendre la logique de votre commande pour 
-        // créer votre user (avec un mot de passe hashé)
         $user = new User();
-        
-        // votre logique
+
+        $user->email = $data->email;
+
+        $user->password = $this->hasher->hashPassword($user, $data->password);
+        $user->firstName = $data->firstName;
+        $user->lastName = $data->lastName;
+
+        $this->em->persist($user);
+        $this->em->flush();
 
         return $user;
     }
