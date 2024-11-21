@@ -2,37 +2,37 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
-use Doctrine\DBAL\Types\Types;
-use App\Doctrine\Trait\TimestampableTrait;
-use App\Doctrine\Trait\UuidTrait;
-use App\Enum\TableEnum;
-use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
-use App\Api\Processor\CreateContentProcessor;
-use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Api\Processor\CreateContentProcessor;
+use App\Doctrine\Trait\TimestampableTrait;
+use App\Doctrine\Trait\UuidTrait;
 use App\Enum\RoleEnum;
+use App\Enum\TableEnum;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: TableEnum::CONTENT)]
 #[ApiResource]
 #[Get(uriTemplate: '/contents/{slug}', uriVariables: ['slug'])]
 #[GetCollection()]
-#[Delete(security: 'is_granted("'.RoleEnum::ROLE_ADMIN.'")', uriTemplate: '/contents/{slug}', uriVariables: ['slug'])]
-#[Post(processor: CreateContentProcessor::class, security: 'is_granted("'.RoleEnum::ROLE_ADMIN.'")')]
-#[Put(security: 'is_granted("'.RoleEnum::ROLE_ADMIN.'")', uriTemplate: '/contents/{slug}', uriVariables: ['slug'])]
+#[Delete(security: 'is_granted("' . RoleEnum::ROLE_ADMIN . '")', uriTemplate: '/contents/{slug}', uriVariables: ['slug'])]
+#[Post(processor: CreateContentProcessor::class, security: 'is_granted("' . RoleEnum::ROLE_ADMIN . '")')]
+#[Put(security: 'is_granted("' . RoleEnum::ROLE_ADMIN . '")', uriTemplate: '/contents/{slug}', uriVariables: ['slug'])]
 #[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
 class Content
 {
-   use TimestampableTrait, UuidTrait;
+    use TimestampableTrait;
+    use UuidTrait;
 
     #[ORM\Column(type: Types::STRING)]
     #[Assert\NotBlank]
@@ -53,7 +53,7 @@ class Content
     public ?string $metaDescription = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: 'author_uuid', referencedColumnName: 'uuid' ,nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'author_uuid', referencedColumnName: 'uuid', nullable: false, onDelete: 'CASCADE')]
     public ?User $author = null;
 
     #[ORM\Column(type: Types::STRING, unique: true)]

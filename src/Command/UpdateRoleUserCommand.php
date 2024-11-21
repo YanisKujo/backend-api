@@ -10,6 +10,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
+use function in_array;
 
 #[AsCommand(
     name: 'app:update:user:role',
@@ -19,7 +21,7 @@ class UpdateRoleUserCommand extends Command
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
-    ){
+    ) {
         parent::__construct();
     }
 
@@ -38,6 +40,7 @@ class UpdateRoleUserCommand extends Command
 
             if (!in_array($role, RoleEnum::ALL)) {
                 $output->writeln("Invalid role: {$role}");
+
                 return Command::FAILURE;
             }
 
@@ -45,6 +48,7 @@ class UpdateRoleUserCommand extends Command
 
             if (!$user) {
                 $output->writeln("Email not found: {$email}");
+
                 return Command::FAILURE;
             }
 
@@ -54,12 +58,12 @@ class UpdateRoleUserCommand extends Command
             $this->em->flush();
 
             $output->writeln("Updated role for user with email: {$user->email}");
-            return Command::SUCCESS;
-        }
-        catch (\Throwable $exception) {
-            $output->writeln("Error: {$exception->getMessage()}");
-            return Command::FAILURE;
 
+            return Command::SUCCESS;
+        } catch (Throwable $exception) {
+            $output->writeln("Error: {$exception->getMessage()}");
+
+            return Command::FAILURE;
         }
     }
 }

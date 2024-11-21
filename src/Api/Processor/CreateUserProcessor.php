@@ -29,9 +29,7 @@ final readonly class CreateUserProcessor implements ProcessorInterface
         $user->email = $data->email;
 
         $user->password = $this->hasher->hashPassword($user, $data->password);
-        
         $user->firstName = $data->firstName;
-        
         $user->lastName = $data->lastName;
 
         $this->em->persist($user);

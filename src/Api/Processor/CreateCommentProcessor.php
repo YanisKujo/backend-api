@@ -9,13 +9,12 @@ use App\Entity\Comment;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
-
 final readonly class CreateCommentProcessor implements ProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $em,
         private Security $security,
-    ){
+    ) {
     }
 
     /** @param CreateComment $data */
@@ -31,7 +30,7 @@ final readonly class CreateCommentProcessor implements ProcessorInterface
 
         $comment->comment = $data->comment;
 
-        $comment->content = $data->content; 
+        $comment->content = $data->content;
 
         $this->em->persist($comment);
         $this->em->flush();

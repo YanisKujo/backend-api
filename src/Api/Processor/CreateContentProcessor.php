@@ -51,7 +51,7 @@ final readonly class CreateContentProcessor implements ProcessorInterface
         }
 
         $content->slug = $slug;
-        
+
         $this->em->persist($content);
         $this->em->flush();
 
