@@ -42,9 +42,9 @@ class Content
     #[Assert\NotBlank]
     public ?string $content = null;
 
-    #[ORM\Column(type: Types::STRING)]
-    #[Assert\NotBlank]
-    public ?string $cover = null;
+    #[ORM\ManyToOne(targetEntity: Upload::class)]
+    #[ORM\JoinColumn(name: 'upload_uuid', referencedColumnName: 'uuid', nullable: true, onDelete: 'CASCADE')]
+    public ?Upload $cover = null;
 
     #[ORM\Column(type: Types::STRING)]
     public ?string $metaTitle = null;
@@ -62,10 +62,6 @@ class Content
 
     #[ORM\Column(type: Types::JSON)]
     public ?array $tags = [];
-
-    #[ORM\ManyToOne(targetEntity: Upload::class)]
-    #[ORM\JoinColumn(name: 'upload_uuid', referencedColumnName: 'uuid', nullable: true, onDelete: 'CASCADE')]
-    public ?Upload $upload = null;
 
     public function __construct()
     {

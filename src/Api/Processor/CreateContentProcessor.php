@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Api\Resource\CreateContent;
 use App\Entity\Content;
+use App\Service\SluggerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\String\Slugger\AsciiSlugger;
@@ -15,6 +16,7 @@ final readonly class CreateContentProcessor implements ProcessorInterface
     public function __construct(
         private EntityManagerInterface $em,
         private Security $security,
+        private SluggerService $sluggerService,
     ) {
     }
 
@@ -44,13 +46,7 @@ final readonly class CreateContentProcessor implements ProcessorInterface
         $slugger = new AsciiSlugger();
         $slug = $slugger->slug($data->title)->lower()->toString();
 
-        $originalSlug = $slug;
-        $i = 1;
-        while ($this->em->getRepository(Content::class)->findOneBy(['slug' => $slug])) {
-            $slug = $originalSlug . '-' . $i++;
-        }
-
-        $content->slug = $slug;
+        $content->slug = $this->sluggerService->generateUniqueSlug($data->title);
 
         $this->em->persist($content);
         $this->em->flush();

@@ -3,6 +3,7 @@
 namespace App\Api\Action;
 
 use App\Entity\Upload;
+use App\Service\FileUploadService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -15,25 +16,25 @@ class UploadAction
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private FileUploadService $fileUploadService,
         #[Autowire(param: 'kernel.project_dir')]
-        private string $projectDir,
+        private string $projectDir
     ) {
     }
 
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): Upload
     {
         $file = $request->files->get('file');
 
         if (!$file instanceof UploadedFile) {
-            throw new BadRequestHttpException();
+            throw new BadRequestHttpException('No valid file provided.');
         }
 
-        $path = uniqid() . '.' . $file->getClientOriginalExtension();
+        $filePath = $this->fileUploadService->handleFileUpload($file, $this->projectDir);
 
-        $file->move($this->projectDir . '/public/medias', $path);
-
-        $upload = new Upload();
-        $upload->path = "/medias/{$path}";
+        $upload= new Upload($filePath);
+        $this->entityManager->persist($upload);
+        $this->entityManager->flush();
 
         return $upload;
     }
