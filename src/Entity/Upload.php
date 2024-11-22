@@ -24,11 +24,9 @@ class Upload
     public ?string $path = null;
 
     public function __construct(
-        string $path
-    )
-    {
+        string $path,
+    ) {
         $this->defineUuid();
         $this->path = $path;
-
     }
 }

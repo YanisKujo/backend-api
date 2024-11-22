@@ -9,3 +9,7 @@
 /vendor/
 /tools/php-cs-fixer/vendor/
 ###< symfony/framework-bundle ###
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###

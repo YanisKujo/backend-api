@@ -60,6 +60,9 @@ class Content
     #[ApiProperty(writable: false)]
     public ?string $slug = null;
 
+    /**
+     * @var array<int, string>
+     */
     #[ORM\Column(type: Types::JSON)]
     public ?array $tags = [];
 

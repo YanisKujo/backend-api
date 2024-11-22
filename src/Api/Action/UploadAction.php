@@ -18,7 +18,7 @@ class UploadAction
         private EntityManagerInterface $entityManager,
         private FileUploadService $fileUploadService,
         #[Autowire(param: 'kernel.project_dir')]
-        private string $projectDir
+        private string $projectDir,
     ) {
     }
 
@@ -32,7 +32,7 @@ class UploadAction
 
         $filePath = $this->fileUploadService->handleFileUpload($file, $this->projectDir);
 
-        $upload= new Upload($filePath);
+        $upload = new Upload($filePath);
         $this->entityManager->persist($upload);
         $this->entityManager->flush();
 

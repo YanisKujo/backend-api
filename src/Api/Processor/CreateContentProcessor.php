@@ -4,12 +4,12 @@ namespace App\Api\Processor;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
-use App\Api\Resource\CreateContent;
 use App\Entity\Content;
+use App\Entity\User;
 use App\Service\SluggerService;
 use Doctrine\ORM\EntityManagerInterface;
+use RuntimeException;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\String\Slugger\AsciiSlugger;
 
 final readonly class CreateContentProcessor implements ProcessorInterface
 {
@@ -20,7 +20,7 @@ final readonly class CreateContentProcessor implements ProcessorInterface
     ) {
     }
 
-    /** @param CreateContent $data */
+    /** @param Content $data */
     public function process(
         mixed $data,
         Operation $operation,
@@ -29,7 +29,12 @@ final readonly class CreateContentProcessor implements ProcessorInterface
     ): Content {
         $content = new Content();
 
-        $content->author = $this->security->getUser();
+        $user = $this->security->getUser();
+        if (!$user instanceof User) {
+            throw new RuntimeException('Invalid user.');
+        }
+
+        $content->author = $user;
 
         $content->title = $data->title;
 
@@ -42,9 +47,6 @@ final readonly class CreateContentProcessor implements ProcessorInterface
         $content->metaTitle = $data->metaTitle;
 
         $content->metaDescription = $data->metaDescription;
-
-        $slugger = new AsciiSlugger();
-        $slug = $slugger->slug($data->title)->lower()->toString();
 
         $content->slug = $this->sluggerService->generateUniqueSlug($data->title);
 

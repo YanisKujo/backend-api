@@ -4,9 +4,10 @@ namespace App\Api\Processor;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
-use App\Api\Resource\CreateComment;
 use App\Entity\Comment;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use RuntimeException;
 use Symfony\Bundle\SecurityBundle\Security;
 
 final readonly class CreateCommentProcessor implements ProcessorInterface
@@ -17,7 +18,7 @@ final readonly class CreateCommentProcessor implements ProcessorInterface
     ) {
     }
 
-    /** @param CreateComment $data */
+    /** @param Comment $data */
     public function process(
         mixed $data,
         Operation $operation,
@@ -26,7 +27,12 @@ final readonly class CreateCommentProcessor implements ProcessorInterface
     ): Comment {
         $comment = new Comment();
 
-        $comment->author = $this->security->getUser();
+        $user = $this->security->getUser();
+        if (!$user instanceof User) {
+            throw new RuntimeException('Invalid user.');
+        }
+
+        $comment->author = $user;
 
         $comment->comment = $data->comment;
 
