@@ -6,19 +6,16 @@ use App\Entity\Content;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-
 class SluggerService
 {
-
     public function __construct(
         private SluggerInterface $slugger,
-        private EntityManagerInterface $em
+        private EntityManagerInterface $em,
     ) {
     }
 
     public function generateUniqueSlug(string $title): string
     {
-        
         $slug = $this->slugger->slug($title)->lower()->toString();
 
         $originalSlug = $slug;

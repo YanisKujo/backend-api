@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use DateTime;
+use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Throwable;
 use const FILTER_VALIDATE_EMAIL;
@@ -22,10 +23,19 @@ final readonly class Tokens
             'expire' => $expire->getTimestamp(),
         ]);
 
-        return base64_encode(json_encode([
+        if (false === $encoded) {
+            throw new RuntimeException('Failed to encode JSON.');
+        }
+
+        $signedData = json_encode([
             $encoded,
             $this->sign($encoded),
-        ]));
+        ]);
+        if (false === $signedData) {
+            throw new RuntimeException('Failed to encode JSON.');
+        }
+
+        return base64_encode($signedData);
     }
 
     public function decodeUserToken(?string $token): ?string

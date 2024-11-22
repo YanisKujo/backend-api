@@ -5,6 +5,8 @@ namespace App\Service;
 use App\Enum\UploadEnum;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use function in_array;
+use const PATHINFO_FILENAME;
 
 class FileUploadService
 {
@@ -40,6 +42,37 @@ class FileUploadService
         return $file;
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function processCsv(UploadedFile $file): array
+    {
+        $data = [];
+
+        if (($handle = fopen($file->getPathname(), 'r')) !== false) {
+            $headers = fgetcsv($handle);
+
+            if (!$headers) {
+                throw new BadRequestHttpException('CSV file is empty or invalid.');
+            }
+
+            $expectedHeaders = ['title', 'content', 'meta_title', 'meta_description', 'tags'];
+            if (array_diff($expectedHeaders, $headers)) {
+                throw new BadRequestHttpException('Invalid CSV format.');
+            }
+
+            while (($row = fgetcsv($handle)) !== false) {
+                $rowData = array_combine($headers, $row);
+                $rowData['tags'] = explode(',', $rowData['tags']);
+                $data[] = $rowData;
+            }
+
+            fclose($handle);
+        }
+
+        return $data;
+    }
+
     private function sanitizeFileName(string $name): string
     {
         return preg_replace('/[^a-zA-Z0-9_\-]/', '_', $name);
@@ -57,32 +90,4 @@ class FileUploadService
 
         return $fileName;
     }
-
-    public function processCsv(UploadedFile $file): array
-{
-    $data = [];
-
-    if (($handle = fopen($file->getPathname(), 'r')) !== false) {
-        $headers = fgetcsv($handle);
-
-        if (!$headers) {
-            throw new BadRequestHttpException('CSV file is empty or invalid.');
-        }
-
-        $expectedHeaders = ['title', 'content', 'meta_title', 'meta_description', 'tags'];
-        if (array_diff($expectedHeaders, $headers)) {
-            throw new BadRequestHttpException('Invalid CSV format.');
-        }
-
-        while (($row = fgetcsv($handle)) !== false) {
-            $rowData = array_combine($headers, $row);
-            $rowData['tags'] = explode(',', $rowData['tags']);
-            $data[] = $rowData;
-        }
-
-        fclose($handle);
-    }
-
-    return $data;
-}
 }

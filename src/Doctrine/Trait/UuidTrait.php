@@ -4,7 +4,7 @@ namespace App\Doctrine\Trait;
 
 use ApiPlatform\Metadata\ApiProperty;
 use Doctrine\ORM\Mapping as ORM;
-use symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
 
 trait UuidTrait

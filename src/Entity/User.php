@@ -49,6 +49,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Ignore]
     public ?string $password = null;
 
+    /**
+     * @var array<int, string>
+     */
     #[ORM\Column]
     public array $roles = [];
 
