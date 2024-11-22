@@ -23,8 +23,12 @@ class Upload
     #[ORM\Column]
     public ?string $path = null;
 
-    public function __construct()
+    public function __construct(
+        string $path
+    )
     {
         $this->defineUuid();
+        $this->path = $path;
+
     }
 }
