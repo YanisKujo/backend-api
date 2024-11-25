@@ -1,51 +1,104 @@
-# Symfony Docker
+# Headless CMS API
 
-A [Docker](https://www.docker.com/)-based installer and runtime for the [Symfony](https://symfony.com) web framework,
-with [FrankenPHP](https://frankenphp.dev) and [Caddy](https://caddyserver.com/) inside!
+## Contexte
 
-![CI](https://github.com/dunglas/symfony-docker/workflows/CI/badge.svg)
+Cette API est conçue pour un CMS Headless permettant la création, la gestion et la distribution de contenus à travers une API REST sécurisée et performante. Le CMS est destiné aux éditeurs de contenu, administrateurs et développeurs front-end. Il permet une gestion centralisée des utilisateurs, contenus, commentaires et fichiers téléversés.
 
-## Getting Started
+## Objectifs
 
-1. If not already done, [install Docker Compose](https://docs.docker.com/compose/install/) (v2.10+)
-2. Run `docker compose build --no-cache` to build fresh images
-3. Run `docker compose up --pull always -d --wait` to set up and start a fresh Symfony project
-4. Open `https://localhost` in your favorite web browser and [accept the auto-generated TLS certificate](https://stackoverflow.com/a/15076602/1352334)
-5. Run `docker compose down --remove-orphans` to stop the Docker containers.
+- Fournir une API REST sécurisée et flexible pour la gestion des contenus.
+- Permettre la distribution des contenus sur différents canaux (applications web, mobile).
+- Garantir la traçabilité des modifications (dates de création et de mise à jour).
+- Utiliser des UUID pour une identification unique des entités.
 
-## Features
+---
 
-* Production, development and CI ready
-* Just 1 service by default
-* Blazing-fast performance thanks to [the worker mode of FrankenPHP](https://github.com/dunglas/frankenphp/blob/main/docs/worker.md) (automatically enabled in prod mode)
-* [Installation of extra Docker Compose services](docs/extra-services.md) with Symfony Flex
-* Automatic HTTPS (in dev and prod)
-* HTTP/3 and [Early Hints](https://symfony.com/blog/new-in-symfony-6-3-early-hints) support
-* Real-time messaging thanks to a built-in [Mercure hub](https://symfony.com/doc/current/mercure.html)
-* [Vulcain](https://vulcain.rocks) support
-* Native [XDebug](docs/xdebug.md) integration
-* Super-readable configuration
+## Fonctionnalités
 
-**Enjoy!**
+### Gestion des utilisateurs (`/api/users`)
+- **GET** `/api/users` : Récupère la liste des utilisateurs.
+- **POST** `/api/users` : Crée un nouvel utilisateur.
+- **PUT** `/api/users/{uuid}` : Remplace les données d’un utilisateur.
+- **DELETE** `/api/users/{uuid}` : Supprime un utilisateur.
 
-## Docs
+### Gestion des contenus (`/api/contents`)
+- **GET** `/api/contents` : Récupère la liste des contenus.
+- **POST** `/api/contents` : Crée un nouveau contenu.
+- **GET** `/api/contents/{slug}` : Récupère un contenu spécifique.
+- **PUT** `/api/contents/{slug}` : Remplace un contenu.
+- **DELETE** `/api/contents/{slug}` : Supprime un contenu.
 
-1. [Options available](docs/options.md)
-2. [Using Symfony Docker with an existing project](docs/existing-project.md)
-3. [Support for extra services](docs/extra-services.md)
-4. [Deploying in production](docs/production.md)
-5. [Debugging with Xdebug](docs/xdebug.md)
-6. [TLS Certificates](docs/tls.md)
-7. [Using MySQL instead of PostgreSQL](docs/mysql.md)
-8. [Using Alpine Linux instead of Debian](docs/alpine.md)
-9. [Using a Makefile](docs/makefile.md)
-10. [Updating the template](docs/updating.md)
-11. [Troubleshooting](docs/troubleshooting.md)
+### Gestion des commentaires (`/api/comments`)
+- **GET** `/api/comments` : Récupère la liste des commentaires.
+- **POST** `/api/comments` : Crée un nouveau commentaire.
+- **PUT** `/api/comments/{uuid}` : Remplace un commentaire.
+- **DELETE** `/api/comments/{uuid}` : Supprime un commentaire.
 
-## License
+### Téléversement de fichiers (`/api/uploads`)
+- **POST** `/api/uploads` : Téléverse un nouveau fichier.
+- **GET** `/api/uploads/{uuid}` : Récupère les détails d’un fichier téléversé.
 
-Symfony Docker is available under the MIT License.
+### Téléversement de fichiers CSV (`/api/csv_uploads`)
+- **POST** `/api/csv_uploads` : Téléverse un fichier CSV.
 
-## Credits
+### Connexion (`/api/login`)
+- **POST** `/api/login` : Authentifie un utilisateur et génère un token d’accès.
 
-Created by [Kévin Dunglas](https://dunglas.dev), co-maintained by [Maxime Helias](https://twitter.com/maxhelias) and sponsored by [Les-Tilleuls.coop](https://les-tilleuls.coop).
+---
+
+## Données et règles métiers
+
+### Modèles de données
+#### Utilisateurs
+- **Nom** : string
+- **Prénom** : string
+- **Email** : string (unique)
+- **UUID**
+- **Dates** : création, modification
+
+#### Contenus
+- **Titre** : string
+- **Image de couverture** : URL
+- **Balises meta** : title, description
+- **Contenu** : texte enrichi
+- **Slug** : auto-généré, unique
+- **Tags** : liste de strings
+- **Auteur** : UUID
+- **Dates** : création, modification
+
+#### Commentaires
+- **Commentaire** : texte
+- **Auteur** : UUID
+- **Dates** : création, modification
+
+### Règles de publication
+#### Profils d’utilisateurs
+1. **Administrateurs**
+   - Gestion complète (création/édition/suppression) des contenus, utilisateurs et commentaires.
+2. **Abonnés**
+   - Lecture des contenus.
+   - Gestion (création/édition/suppression) de leurs propres commentaires.
+3. **Visiteurs**
+   - Accès en lecture seule aux contenus.
+
+---
+
+## Contraintes techniques
+- **Langage** : PHP 8.3
+- **Framework** : Symfony 7.1 (ou supérieur)
+- **Typage strict** : `declare(strict_types=1);`
+- **Gestion des identifiants** : UUID
+
+---
+
+## Documentation de l'API
+
+Pour plus d'informations, consultez la documentation complète [ici](https://localhost/api/docs#/).
+
+---
+
+## Installation
+
+1. Clonez le dépôt :
+   ```bash
+   git clone git@github.com:RubenAlvedin/project.git
