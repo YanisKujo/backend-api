@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use App\Api\Action\UploadAction;
@@ -15,6 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: TableEnum::UPLOAD)]
 #[Get]
 #[Post(controller: UploadAction::class, deserialize: false, security: 'is_granted("' . RoleEnum::ROLE_ADMIN . '")')]
+#[ApiFilter(DateFilter::class, properties: ['createdAt' => 'exact'])]
 class Upload
 {
     use UuidTrait;
