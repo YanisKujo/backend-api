@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Api\Filter\UuidFilter;
 use App\Api\Processor\CreateCommentProcessor;
 use App\Doctrine\Trait\TimestampableTrait;
 use App\Doctrine\Trait\UuidTrait;
@@ -28,6 +29,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Post(processor: CreateCommentProcessor::class, security: 'is_granted("' . RoleEnum::ROLE_USER . '")')]
 #[Put(denormalizationContext: ['groups' => ['comment:update']], security: 'is_granted("' . RoleEnum::ROLE_USER . '") and object.author == user or is_granted("' . RoleEnum::ROLE_ADMIN . '") and object.author == user')]
 #[ApiFilter(SearchFilter::class, properties: ['content' => 'exact'])]
+#[ApiFilter(UuidFilter::class, properties: ['author' => 'partial'])]
 #[ApiProperty()]
 class Comment
 {

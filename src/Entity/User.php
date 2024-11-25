@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
@@ -27,6 +29,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Put(security: 'is_granted("' . RoleEnum::ROLE_USER . '") and object == user or is_granted("' . RoleEnum::ROLE_ADMIN . '")')]
 #[GetCollection()]
 #[ORM\Table(name: TableEnum::USER)]
+#[ApiFilter(DateFilter::class, properties: ['createdAt' => 'partial'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use UuidTrait;
