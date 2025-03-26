@@ -3,6 +3,8 @@
 namespace App\Service;
 
 use DateTime;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Throwable;
@@ -18,53 +20,27 @@ final readonly class Tokens
 
     public function generateTokenForUser(string $email, DateTime $expire = new DateTime('+4 hours')): string
     {
-        $encoded = json_encode([
+        $payload = [
             'email' => $email,
-            'expire' => $expire->getTimestamp(),
-        ]);
+            'exp' => $expire->getTimestamp(), // 🔄 Utilisation de 'exp' pour la date d'expiration standard du JWT
+        ];
 
-        if (false === $encoded) {
-            throw new RuntimeException('Failed to encode JSON.');
-        }
-
-        $signedData = json_encode([
-            $encoded,
-            $this->sign($encoded),
-        ]);
-        if (false === $signedData) {
-            throw new RuntimeException('Failed to encode JSON.');
-        }
-
-        return base64_encode($signedData);
+        return JWT::encode($payload, $this->secret, 'HS256'); // 🔥 Utilisation correcte du JWT avec algorithme HS256
     }
 
     public function decodeUserToken(?string $token): ?string
     {
         try {
-            [$info, $sign] = json_decode(base64_decode($token), true);
+            $decoded = JWT::decode($token, new Key($this->secret, 'HS256'));
 
-            if ($sign !== $this->sign($info)) {
-                return null;
-            }
-
-            $info = json_decode($info, true);
-
-            if ($info['expire'] < time()) {
-                return null;
-            }
-
-            if (isset($info['email']) && filter_var($info['email'], FILTER_VALIDATE_EMAIL)) {
-                return $info['email'];
+            // Vérifie que l'email est bien présent dans le token
+            if (isset($decoded->email) && filter_var($decoded->email, FILTER_VALIDATE_EMAIL)) {
+                return $decoded->email;
             }
 
             return null;
-        } catch (Throwable) {
-            return null;
+        } catch (Throwable $e) {
+            return null; // Retourne null en cas d'échec de décodage
         }
-    }
-
-    private function sign(string $encoded): string
-    {
-        return hash('sha256', $encoded . '/' . $this->secret);
     }
 }

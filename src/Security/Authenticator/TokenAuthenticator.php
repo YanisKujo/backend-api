@@ -30,16 +30,30 @@ final class TokenAuthenticator extends AbstractAuthenticator
 
     public function authenticate(Request $request): Passport
     {
-        $token = $request->headers->get('Authorization');
-
+        $authorizationHeader = $request->headers->get('Authorization');
+    
+        if (!$authorizationHeader || !str_starts_with($authorizationHeader, 'Bearer ')) {
+            throw new AuthenticationException('Token manquant ou invalide.');
+        }
+    
+        // ✅ Récupère correctement le token en retirant "Bearer "
+        $token = str_replace('Bearer ', '', $authorizationHeader);
+    
         return new SelfValidatingPassport(new UserBadge($token, function (string $token): ?User {
             if (null !== $email = $this->tokens->decodeUserToken($token)) {
-                return $this->em->getRepository(User::class)->findOneBy(['email' => $email]);
+                $user = $this->em->getRepository(User::class)->findOneBy(['email' => $email]);
+    
+                if (!$user) {
+                    throw new AuthenticationException('Utilisateur non trouvé.');
+                }
+    
+                return $user;
             }
-
-            return null;
+    
+            throw new AuthenticationException('Token invalide.');
         }));
     }
+    
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {

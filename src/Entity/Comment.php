@@ -41,14 +41,18 @@ class Comment
     #[Groups(['comment:update'])]
     public ?string $comment = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: 'author_uuid', referencedColumnName: 'uuid', nullable: false, onDelete: 'CASCADE')]
-    public ?User $author = null;
+    #[Groups(['comment:update'])]
+#[ORM\ManyToOne(targetEntity: User::class)]
+#[ORM\JoinColumn(name: 'author_uuid', referencedColumnName: 'uuid', nullable: false, onDelete: 'CASCADE')]
+public ?User $author = null;
+
 
     #[ORM\ManyToOne(targetEntity: Content::class)]
-    #[ORM\JoinColumn(name: 'content_uuid', referencedColumnName: 'uuid', nullable: false)]
+    #[ORM\JoinColumn(name: 'content_uuid', referencedColumnName: 'uuid', nullable: false, onDelete: 'CASCADE')]
     #[Assert\NotBlank]
+    #[Groups(['comment:update'])] // ✅ AJOUTE CECI
     public ?Content $content = null;
+
 
     public function __construct()
     {

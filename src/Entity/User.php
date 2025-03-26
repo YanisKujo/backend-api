@@ -45,11 +45,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(unique: true)]
     #[Assert\Email]
-    #[ApiProperty(writable: false)]
+    #[ApiProperty(writable: true)]
     public ?string $email = null;
 
     #[ORM\Column]
-    #[Ignore]
     public ?string $password = null;
 
     /**

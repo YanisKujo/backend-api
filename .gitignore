@@ -13,3 +13,5 @@
 ###> phpstan/phpstan ###
 phpstan.neon
 ###< phpstan/phpstan ###
+vendor
+.env.local

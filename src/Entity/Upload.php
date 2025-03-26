@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 #[ORM\Table(name: TableEnum::UPLOAD)]
 #[Get]
-#[Post(controller: UploadAction::class, deserialize: false, security: 'is_granted("' . RoleEnum::ROLE_ADMIN . '")')]
+#[Post(controller: UploadAction::class, deserialize: false)]
 #[ApiFilter(DateFilter::class, properties: ['createdAt' => 'exact'])]
 class Upload
 {
