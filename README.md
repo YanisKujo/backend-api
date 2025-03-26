@@ -101,4 +101,4 @@ Pour plus d'informations, consultez la documentation complète [ici](https://loc
 
 1. Clonez le dépôt :
    ```bash
-   git clone git@github.com:RubenAlvedin/project.git
+   git clone git@github.com:YanisKujo/backend-api.git
